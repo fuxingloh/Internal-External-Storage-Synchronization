@@ -155,10 +155,19 @@ public class SqliteAutoController<E> {
 	 * 
 	 * @param object
 	 */
-	public long insert(E object) {
+	public E insert(E object) {
 		ContentValues cv = getContentValues(object);
 		cv.remove(primaryKeyField.name);
-		return mainSqlController.insert(cv);
+		long id = mainSqlController.insert(cv);
+		primaryField.setAccessible(true);
+		try {
+			primaryField.setInt(object,(int) id);
+		} catch (IllegalAccessException e) {
+			throw new RuntimeException(e);
+		} catch (IllegalArgumentException e) {
+			throw new RuntimeException(e);
+		}
+		return object;
 	}
 
 	public ContentValues getContentValues(E object) {
@@ -258,7 +267,8 @@ public class SqliteAutoController<E> {
 			}
 			for (int i = 0; i < storageList.size(); i++) {
 				SqliteField sqlField = storageList.get(i);
-				String actualName = sqlField.name.split(SqliteTool.divider)[0];
+				Field classBasedField = storageFieldList.get(i);
+				String actualName = classBasedField.getName();
 				Field field = object.getClass().getDeclaredField(actualName);
 				// put the data in content vlaues
 				Object innerObj = SqliteTool.deserialize(sqlField.name,
