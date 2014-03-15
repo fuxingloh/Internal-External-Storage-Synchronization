@@ -1,6 +1,7 @@
 package com.ravolo.ies.sqlite;
 
 import java.util.ArrayList;
+import java.util.Collection;
 
 import com.ravolo.ies.exception.NullPrimaryKeyException;
 
@@ -86,6 +87,10 @@ public class SqliteTable {
 	public void setPrimaryInteger(String primaryName) {
 		this.primaryName = primaryName + " INTEGER";
 	}
+	
+	void setPrimary(String full){
+		this.primaryName = full;
+	}
 
 	/**
 	 * 
@@ -118,6 +123,10 @@ public class SqliteTable {
 	public void addField(SqliteField column) {
 		columnList.add(column);
 
+	}
+	
+	void addAllField(Collection<? extends SqliteField> storageList){
+		columnList.addAll(storageList);
 	}
 
 	/**
