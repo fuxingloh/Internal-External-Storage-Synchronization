@@ -10,5 +10,5 @@ public interface ImmediateStorage<E> {
 	
 	public boolean delete(E object);
 	
-	public E update(E object);
+	public boolean update(E object);
 }
