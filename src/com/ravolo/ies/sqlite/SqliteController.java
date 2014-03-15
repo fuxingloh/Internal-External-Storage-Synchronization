@@ -60,12 +60,12 @@ public class SqliteController extends SQLiteOpenHelper {
 	 * 
 	 * @param queryValues
 	 */
-	public void insert(HashMap<String, String> queryValues) {
+	public long insert(HashMap<String, String> queryValues) {
 		ContentValues values = new ContentValues();
 		for (SqliteField col : table.getFullFieldList()) {
 			values.put(col.name, queryValues.get(col.name));
 		}
-		insert(values);
+		return insert(values);
 	}
 
 	/**
@@ -73,10 +73,9 @@ public class SqliteController extends SQLiteOpenHelper {
 	 * 
 	 * @param values
 	 */
-	public void insert(ContentValues values) {
+	public long insert(ContentValues values) {
 		SQLiteDatabase database = this.getWritableDatabase();
-		database.insert(table.getTableName(), null, values);
-		database.close();
+		return database.insert(table.getTableName(), null, values);
 	}
 
 	public void insertOrUpdate(ContentValues values) {

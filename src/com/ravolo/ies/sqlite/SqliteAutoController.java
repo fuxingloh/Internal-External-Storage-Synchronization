@@ -107,8 +107,9 @@ public class SqliteAutoController<E> {
 						primaryKeyField = SqliteTool.toField(name, field);
 						break;
 					case ClassTool.STRING:
-						primaryKeyField = SqliteTool.toField(name, field);
-						break;
+						throw new IdMustBeIntOrStringException("Id can only be int");
+						// primaryKeyField = SqliteTool.toField(name, field);
+						// break;
 					default:
 						throw new IdMustBeIntOrStringException();
 					}
@@ -154,8 +155,10 @@ public class SqliteAutoController<E> {
 	 * 
 	 * @param object
 	 */
-	public void insert(E object) {
-		mainSqlController.insert(getContentValues(object));
+	public long insert(E object) {
+		ContentValues cv = getContentValues(object);
+		cv.remove(primaryKeyField.name);
+		return mainSqlController.insert(cv);
 	}
 
 	public ContentValues getContentValues(E object) {
@@ -225,9 +228,10 @@ public class SqliteAutoController<E> {
 	}
 
 	public List<E> getAll() {
-		List<HashMap<String,Object>> dataList = mainSqlController.getAllAsObject();
+		List<HashMap<String, Object>> dataList = mainSqlController
+				.getAllAsObject();
 		List<E> list = new ArrayList<E>();
-		for(HashMap<String,Object> data:dataList){
+		for (HashMap<String, Object> data : dataList) {
 			list.add(convertToObject(data));
 		}
 		return list;
