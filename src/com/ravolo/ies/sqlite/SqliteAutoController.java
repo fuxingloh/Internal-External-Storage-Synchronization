@@ -40,6 +40,7 @@ public class SqliteAutoController<E> {
 
 	public SqliteAutoController(Context context, Class<E> clazz, int version) {
 		this.context = context;
+		this.clazz = clazz;
 		init(version);
 	}
 
@@ -236,7 +237,7 @@ public class SqliteAutoController<E> {
 		return convertToObject(mainSqlController.getRowAsObject(id));
 	}
 
-	public E convertToObject(HashMap<String, Object> values) {
+	E convertToObject(HashMap<String, Object> values) {
 		try {
 			E object = ObjenesisHelper.newInstance(clazz);
 			// set primary first
