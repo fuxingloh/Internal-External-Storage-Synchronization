@@ -2,20 +2,24 @@ package com.ravolo.ies.storages.internal;
 
 import java.util.List;
 
+import com.ravolo.ies.core.StorageOperation;
 import com.ravolo.ies.sqlite.SqliteAutoController;
 import com.ravolo.ies.storages.ImmediateStorage;
-import com.ravolo.ies.storages.Storage;
 
-public class SqliteStorage<E> extends Storage<E> implements ImmediateStorage<E> {
+public class SqliteStorage<E> extends ImmediateStorage<E> {
 
 	private SqliteAutoController<E> sqlAutoController;
-	public SqliteStorage(Class<E> clazz,int dataVersion){
-		super(clazz, dataVersion);
+
+	public SqliteStorage(Class<E> clazz,StorageOperation<E> operations, int dataVersion) {
+		super(clazz, operations, dataVersion);
 	}
-	public void init(){
+
+	public void init() {
 		super.init();
-		sqlAutoController = new SqliteAutoController<E>(null,clazz,dataVersion);
+		sqlAutoController = new SqliteAutoController<E>(null, clazz,
+				dataVersion);
 	}
+
 	@Override
 	public List<E> load() {
 		return sqlAutoController.getAll();
@@ -37,5 +41,5 @@ public class SqliteStorage<E> extends Storage<E> implements ImmediateStorage<E> 
 		sqlAutoController.update(object);
 		return true;
 	}
-	
+
 }

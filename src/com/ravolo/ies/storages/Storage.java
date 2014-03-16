@@ -3,17 +3,21 @@ package com.ravolo.ies.storages;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.ravolo.ies.core.StorageOperation;
+
 public abstract class Storage<E> {
 	
 	protected List<E> dataList;
 	protected Class<E> clazz;
 	protected int dataVersion;
+	protected StorageOperation<E> operations;
 	/**
 	 * All storage will call init the init the settings
 	 */
-	public Storage(Class<E> clazz,int dataVersion) {
-		init();
+	public Storage(Class<E> clazz,StorageOperation<E> operations, int dataVersion) {
 		this.clazz = clazz;
+		this.operations = operations;
+		init();
 	}
 
 	public void init() {

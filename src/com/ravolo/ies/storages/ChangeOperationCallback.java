@@ -1,5 +1,5 @@
 package com.ravolo.ies.storages;
 
-public interface ChangeOperationCallback {
-
+public interface ChangeOperationCallback<E> {
+	public void onComplete();
 }

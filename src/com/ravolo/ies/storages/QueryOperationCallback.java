@@ -1,5 +1,7 @@
 package com.ravolo.ies.storages;
 
-public interface QueryOperationCallback {
+import java.util.List;
 
+public interface QueryOperationCallback<E>{
+	public void onQueryComplete(List<E> dataList);
 }

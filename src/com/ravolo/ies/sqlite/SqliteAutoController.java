@@ -47,7 +47,7 @@ public class SqliteAutoController<E> {
 	public void init(int version) {
 		storageFieldList = new ArrayList<Field>();
 		this.generateStorageData();
-		this.initSql(version);
+		this.initDatabase(version);
 	}
 
 	/**
@@ -130,7 +130,7 @@ public class SqliteAutoController<E> {
 		return SqliteTool.toBlobField(name, field);
 	}
 
-	private void initSql(int version) {
+	private void initDatabase(int version) {
 		// use package name as db name
 		String dbName = clazz.getPackage().getName();
 		String[] packages = dbName.split(Pattern.quote("."));
