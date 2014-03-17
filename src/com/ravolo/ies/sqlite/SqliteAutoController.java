@@ -44,7 +44,7 @@ public class SqliteAutoController<E> {
 		init(version);
 	}
 
-	public void init(int version) {
+	void init(int version) {
 		storageFieldList = new ArrayList<Field>();
 		this.generateStorageData();
 		this.initDatabase(version);
@@ -107,9 +107,9 @@ public class SqliteAutoController<E> {
 						primaryKeyField = SqliteTool.toField(name, field);
 						break;
 					case ClassTool.STRING:
-						throw new IdMustBeIntOrStringException("Id can only be int");
-						// primaryKeyField = SqliteTool.toField(name, field);
-						// break;
+						throw new IdMustBeIntOrStringException("Id can only be int.");
+						//primaryKeyField = SqliteTool.toField(name, field);
+						//break;
 					default:
 						throw new IdMustBeIntOrStringException();
 					}
@@ -161,7 +161,13 @@ public class SqliteAutoController<E> {
 		long id = mainSqlController.insert(cv);
 		primaryField.setAccessible(true);
 		try {
-			primaryField.setInt(object,(int) id);
+			if (primaryKeyField.type.equals(SqliteField.TEXT)) {
+				// Text
+				primaryField.set(object,id+"");
+			} else if (primaryKeyField.type.equals(SqliteField.INTEGER)) {
+				// Integer
+				primaryField.setInt(object,(int) id);
+			}
 		} catch (IllegalAccessException e) {
 			throw new RuntimeException(e);
 		} catch (IllegalArgumentException e) {
@@ -249,17 +255,29 @@ public class SqliteAutoController<E> {
 	public E lookUp(String id) {
 		return convertToObject(mainSqlController.getRowAsObject(id));
 	}
+	
+	public E lookUp(int id) {
+		return lookUp(id+"");
+	}
+	
+	/**
+	 * Execument query statement
+	 * @param statement
+	 */
+	public void executeQuery(String statement){
+		mainSqlController.execSQL(statement);
+	}
 
 	E convertToObject(HashMap<String, Object> values) {
 		try {
 			E object = ObjenesisHelper.newInstance(clazz);
 			// set primary first
-			String pActualName = primaryKeyField.name.split(SqliteTool.divider)[0];
+			String pActualName = primaryField.getName();
 			Field pField = object.getClass().getDeclaredField(pActualName);
 			pField.setAccessible(true);
 			if (primaryKeyField.type.equals(SqliteField.TEXT)) {
 				// Text
-				pField.set(object, (String) values.get(primaryKeyField.name));
+				pField.set(object, values.get(primaryKeyField.name)+"");
 			} else if (primaryKeyField.type.equals(SqliteField.INTEGER)) {
 				// Integer
 				pField.setInt(object,

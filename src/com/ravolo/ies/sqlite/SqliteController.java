@@ -51,6 +51,7 @@ public class SqliteController extends SQLiteOpenHelper {
 			database.execSQL(query);
 		} else {
 			query = "DROP TABLE IF EXISTS " + table.getTableName();
+			database.execSQL(query);
 			onCreate(database);
 		}
 	}

@@ -225,7 +225,7 @@ public abstract class InternalExternalStorage<E> extends Thread {
 	 */
 	public void insert(final E object,
 			final StorageOperation.Insert<E> insertOperation) {
-		// TODO bad way lots code
+		// TODO bad way, lots code
 		if (externalLoaded) {
 			externalStorage.insert(object, new InsertOperationCallback<E>() {
 				@Override
@@ -272,7 +272,7 @@ public abstract class InternalExternalStorage<E> extends Thread {
 	 */
 	public void delete(final E object,
 			final StorageOperation.Delete deleteOperation) {
-		// TODO bad way lots coode
+		// TODO bad way, lots code
 		if (externalLoaded) {
 			externalStorage.delete(object, new ChangeOperationCallback<E>() {
 				@Override
@@ -314,7 +314,7 @@ public abstract class InternalExternalStorage<E> extends Thread {
 	 */
 	public void update(final E object,
 			final StorageOperation.Update updateOperation) {
-		// TODO bad way lots coode
+		// TODO bad way, lots code
 		if (externalLoaded) {
 			externalStorage.delete(object, new ChangeOperationCallback<E>() {
 				@Override

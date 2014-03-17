@@ -15,17 +15,22 @@ public class SqliteTool {
 	public static final String divider = "_Type";
 
 	public static SqliteField toField(String name, Field field) {
-		name += divider + ClassTool.getType(field);
+		int fieldType = ClassTool.getType(field);
+		name += divider + fieldType;
 		String type = null;
-		switch (checkStoreFieldType(field)) {
+		switch (checkStoreFieldType(fieldType)) {
 		case TEXT:
 			type = SqliteField.TEXT;
+			break;
 		case INTEGER:
 			type = SqliteField.INTEGER;
+			break;
 		case REAL:
 			type = SqliteField.REAL;
+			break;
 		case BLOB:
 			type = SqliteField.BLOB;
+			break;
 		case -1:
 			return null;// unknown type
 		}
@@ -37,6 +42,26 @@ public class SqliteTool {
 		name += divider + field.getType().getSimpleName();
 		SqliteField sqlField = new SqliteField(name, SqliteField.BLOB);
 		return sqlField;
+	}
+	
+	public static int checkStoreFieldType(int type) {
+		switch (type) {
+		case ClassTool.STRING:
+		case ClassTool.CHAR:
+			return TEXT;
+		case ClassTool.INT:
+		case ClassTool.BYTE:
+		case ClassTool.SHORT:
+		case ClassTool.LONG:
+			return INTEGER;
+		case ClassTool.FLOAT:
+		case ClassTool.DOUBLE:
+			return REAL;
+		case ClassTool.BOOLEAN:
+			return BLOB;
+		default:
+			return -1;
+		}
 	}
 
 	public static int checkStoreFieldType(Field field) {
