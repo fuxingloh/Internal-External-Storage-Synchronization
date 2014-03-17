@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.ravolo.ies.merger.DataMerger;
+import com.ravolo.ies.storagerefresher.StorageRefresher;
 import com.ravolo.ies.storages.AsyncStorage;
 import com.ravolo.ies.storages.ChangeOperationCallback;
 import com.ravolo.ies.storages.ImmediateStorage;
@@ -29,6 +30,7 @@ public abstract class InternalExternalStorage<E> extends Thread {
 
 	private boolean internalLoaded;
 	private boolean externalLoaded;
+	private boolean networked;
 
 	private DataMerger<E> dataMerger;
 
@@ -37,6 +39,7 @@ public abstract class InternalExternalStorage<E> extends Thread {
 		this.internalStorage = internalStorage;
 		this.externalStorage = externalStorage;
 		internalImmediate = true;
+		networked = true;
 	}
 
 	public InternalExternalStorage(AsyncStorage<E> internalStorage,
@@ -44,14 +47,42 @@ public abstract class InternalExternalStorage<E> extends Thread {
 		this.internalStorage = internalStorage;
 		this.externalStorage = externalStorage;
 		internalImmediate = false;
+		networked = true;
 	}
 
+	/**
+	 * Start the operations
+	 * 
+	 * @param operation
+	 * @param dataMerger
+	 */
 	public void start(StorageOperation<E> operation, DataMerger<E> dataMerger) {
 		internalDataList = new ArrayList<E>();
 		externalDataList = new ArrayList<E>();
 		this.dataMerger = dataMerger;
 		this.operations = operation;
+		this.internalStorage.setOperations(operations);
+		this.externalStorage.setOperations(operations);
 		start();
+	}
+
+	/**
+	 * Specifcy the network
+	 * 
+	 * @param operation
+	 * @param dataMerger
+	 * @param networked
+	 */
+	public void start(StorageOperation<E> operation, DataMerger<E> dataMerger,
+			boolean networked) {
+		this.networked = networked;
+		start(operation, dataMerger);
+	}
+
+	@Deprecated
+	public void start(StorageOperation<E> operation) {
+		this.networked = false;
+		start(operation, null);
 	}
 
 	@Override
@@ -64,7 +95,9 @@ public abstract class InternalExternalStorage<E> extends Thread {
 		externalLoaded = false;
 		if (internalImmediate) {
 			loadInternalDatabase();
-			loadExternalDatabase();
+			if (networked) {
+				loadExternalDatabase();
+			}
 		} else {
 			// If not immediate the load timing, sequence won't be same
 		}
@@ -186,8 +219,6 @@ public abstract class InternalExternalStorage<E> extends Thread {
 			((AsyncStorage<E>) internalStorage).update(toUpdateInternalList);
 		}
 	}
-
-	// TIMED REFRESHER TODO
 
 	/**
 	 * This will insert to both
@@ -318,6 +349,20 @@ public abstract class InternalExternalStorage<E> extends Thread {
 		}
 	}
 
+	// Refresher module
+
+	public StorageRefresher storageRefresher;
+
+	public void setStorageRefresher(StorageRefresher storageRefresher) {
+		this.storageRefresher = storageRefresher;
+		this.storageRefresher.setInternalExternalStorage(this);
+		this.storageRefresher.start();
+	}
+
+	public void stopStorageRefresher() {
+
+	}
+
 	public boolean isInternalImmediate() {
 		return internalImmediate;
 	}
@@ -329,5 +374,4 @@ public abstract class InternalExternalStorage<E> extends Thread {
 	public AsyncStorage<E> getExternalStorage() {
 		return externalStorage;
 	}
-
 }

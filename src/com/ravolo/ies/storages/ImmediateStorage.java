@@ -3,12 +3,10 @@ package com.ravolo.ies.storages;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.ravolo.ies.core.StorageOperation;
-
 public abstract class ImmediateStorage<E> extends Storage<E> {
 
-	public ImmediateStorage(Class<E> clazz,StorageOperation<E> operations, int dataVersion) {
-		super(clazz, operations, dataVersion);
+	public ImmediateStorage(Class<E> clazz, int dataVersion) {
+		super(clazz, dataVersion);
 	}
 
 	public abstract List<E> load();

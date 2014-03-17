@@ -20,10 +20,9 @@ public class AzureMobileServiceStorage<E> extends AsyncStorage<E> {
 	private MobileServiceTable<E> table;
 	private String tableName;
 
-	public AzureMobileServiceStorage(Class<E> clazz,
-			StorageOperation<E> operations, int dataVersion,
+	public AzureMobileServiceStorage(Class<E> clazz, int dataVersion,
 			MobileServiceClient client) {
-		super(clazz, operations, dataVersion);
+		super(clazz, dataVersion);
 		this.client = client;
 		this.table = this.client.getTable(clazz);
 	}
@@ -36,10 +35,9 @@ public class AzureMobileServiceStorage<E> extends AsyncStorage<E> {
 	 * @param client
 	 * @param tableName
 	 */
-	public AzureMobileServiceStorage(Class<E> clazz,
-			StorageOperation<E> operations, int dataVersion,
+	public AzureMobileServiceStorage(Class<E> clazz, int dataVersion,
 			MobileServiceClient client, String tableName) {
-		super(clazz, operations, dataVersion);
+		super(clazz, dataVersion);
 		this.client = client;
 		this.tableName = tableName;
 		this.table = this.client.getTable(this.tableName, clazz);

@@ -14,9 +14,8 @@ public abstract class Storage<E> {
 	/**
 	 * All storage will call init the init the settings
 	 */
-	public Storage(Class<E> clazz,StorageOperation<E> operations, int dataVersion) {
+	public Storage(Class<E> clazz, int dataVersion) {
 		this.clazz = clazz;
-		this.operations = operations;
 		init();
 	}
 
@@ -40,4 +39,9 @@ public abstract class Storage<E> {
 		return dataVersion;
 	}
 
+	public void setOperations(StorageOperation<E> operations) {
+		this.operations = operations;
+	}
+
+	
 }

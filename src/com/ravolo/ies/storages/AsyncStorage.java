@@ -3,13 +3,10 @@ package com.ravolo.ies.storages;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.ravolo.ies.core.StorageOperation;
-
 public abstract class AsyncStorage<E> extends Storage<E> {
 
-	public AsyncStorage(Class<E> clazz, StorageOperation<E> operations,
-			int dataVersion) {
-		super(clazz, operations, dataVersion);
+	public AsyncStorage(Class<E> clazz, int dataVersion) {
+		super(clazz, dataVersion);
 	}
 
 	public abstract void load(QueryOperationCallback<E> callback);
