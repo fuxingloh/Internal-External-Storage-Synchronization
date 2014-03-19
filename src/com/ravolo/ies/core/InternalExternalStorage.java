@@ -106,11 +106,11 @@ public abstract class InternalExternalStorage<E> extends Thread {
 	void loadInternalDatabase() {
 		internalDataList.clear();
 		if (internalImmediate) {
-			internalDataList.addAll(operations.onInternalLoad(internalStorage
-					.getDataList()));
+			ImmediateStorage<E> imStorage = (ImmediateStorage<E>) internalStorage;
+			internalDataList.addAll(operations.onInternalLoad(imStorage.load()));
 		}
-		operations.onCompleteInternalLoad(internalDataList);
 		internalLoaded = true;
+		operations.onCompleteInternalLoad(internalDataList);
 		operations.ready();
 		loadedInOrEx();
 	}
@@ -120,9 +120,9 @@ public abstract class InternalExternalStorage<E> extends Thread {
 		externalStorage.load(new QueryOperationCallback<E>() {
 			@Override
 			public void onQueryComplete(List<E> dataList) {
+				externalLoaded = true;
 				externalDataList.addAll(operations.onExternalLoad(dataList));
 				operations.onCompleteExternalLoad(externalDataList);
-				externalLoaded = true;
 				loadedInOrEx();
 			}
 

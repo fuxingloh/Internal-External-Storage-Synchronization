@@ -262,6 +262,7 @@ public class SqliteController extends SQLiteOpenHelper {
 
 	/**
 	 * use get as object or get as string instead
+	 * 
 	 * @param id
 	 * @return
 	 */
@@ -272,6 +273,7 @@ public class SqliteController extends SQLiteOpenHelper {
 
 	/**
 	 * use get as object or get as string instead
+	 * 
 	 * @return
 	 */
 	@Deprecated

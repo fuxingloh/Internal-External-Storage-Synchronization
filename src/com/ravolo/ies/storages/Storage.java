@@ -16,6 +16,7 @@ public abstract class Storage<E> {
 	 */
 	public Storage(Class<E> clazz, int dataVersion) {
 		this.clazz = clazz;
+		this.dataVersion = dataVersion;
 		init();
 	}
 

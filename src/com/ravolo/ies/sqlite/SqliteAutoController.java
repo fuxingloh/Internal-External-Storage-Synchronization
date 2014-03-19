@@ -195,7 +195,7 @@ public class SqliteAutoController<E> {
 				if (sqlField.type.equals(SqliteField.TEXT)) {
 					values.put(sqlField.name, (String) field.get(object));
 				} else if (sqlField.type.equals(SqliteField.INTEGER)) {
-					values.put(sqlField.name, field.getInt(object));
+					values.put(sqlField.name, field.getLong(object));
 				} else if (sqlField.type.equals(SqliteField.REAL)) {
 					values.put(sqlField.name, field.getDouble(object));
 				} else if (sqlField.type.equals(SqliteField.BLOB)) {

@@ -30,5 +30,13 @@ public class MappedData<E> {
 	public E getExternalData() {
 		return externalData;
 	}
+	
+	public void updateInternalToExternal(){
+		setDoWhat(UPDATE_INTERNAL_TO_EXTERNAL);
+	}
+	
+	public void updateExternalToInternal(){
+		setDoWhat(UPDATE_EXTERNAl_TO_INTERNAL);
+	}
 
 }

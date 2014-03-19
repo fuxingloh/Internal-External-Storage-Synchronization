@@ -11,14 +11,8 @@ public class SqliteStorage<E> extends ImmediateStorage<E> {
 
 	private SqliteAutoController<E> sqlAutoController;
 
-	private Context context;
 	public SqliteStorage(Class<E> clazz, int dataVersion,Context context) {
 		super(clazz, dataVersion);
-		this.context = context;
-	}
-
-	public void init() {
-		super.init();
 		sqlAutoController = new SqliteAutoController<E>(context, clazz,
 				dataVersion);
 	}
