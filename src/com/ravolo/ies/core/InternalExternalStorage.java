@@ -3,6 +3,7 @@ package com.ravolo.ies.core;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.ravolo.ies.core.StorageOperation.StorageInterface;
 import com.ravolo.ies.merger.DataMerger;
 import com.ravolo.ies.storagerefresher.StorageRefresher;
 import com.ravolo.ies.storages.AsyncStorage;
@@ -107,7 +108,8 @@ public abstract class InternalExternalStorage<E> extends Thread {
 		internalDataList.clear();
 		if (internalImmediate) {
 			ImmediateStorage<E> imStorage = (ImmediateStorage<E>) internalStorage;
-			internalDataList.addAll(operations.onInternalLoad(imStorage.load()));
+			internalDataList
+					.addAll(operations.onInternalLoad(imStorage.load()));
 		}
 		internalLoaded = true;
 		operations.onCompleteInternalLoad(internalDataList);
@@ -218,13 +220,34 @@ public abstract class InternalExternalStorage<E> extends Thread {
 		} else {
 			((AsyncStorage<E>) internalStorage).update(toUpdateInternalList);
 		}
+		// Run this on an external client to reread and load all.?
+
+		// Remove existing data first
+		internalDataList.clear();
+		// Set immediate data
+		if (internalImmediate) {
+			internalDataList.addAll(((ImmediateStorage<E>) internalStorage)
+					.load());
+			operations.onMergeComplete(internalDataList);
+		} else {
+			((AsyncStorage<E>) internalStorage)
+					.load(new QueryOperationCallback<E>() {
+						@Override
+						public void onQueryComplete(List<E> dataList) {
+							internalDataList
+									.addAll(((ImmediateStorage<E>) internalStorage)
+											.load());
+							operations.onMergeComplete(internalDataList);
+						}
+					});
+		}
 	}
 
 	/**
 	 * This will insert to both
 	 */
 	public void insert(final E object,
-			final StorageOperation.Insert<E> insertOperation) {
+			final StorageInterface.InsertOperation<E> insertOperation) {
 		// TODO bad way, lots code
 		if (externalLoaded) {
 			externalStorage.insert(object, new InsertOperationCallback<E>() {
@@ -271,7 +294,7 @@ public abstract class InternalExternalStorage<E> extends Thread {
 	 * @param deleteOperation
 	 */
 	public void delete(final E object,
-			final StorageOperation.Delete deleteOperation) {
+			final StorageInterface.DeleteOperation deleteOperation) {
 		// TODO bad way, lots code
 		if (externalLoaded) {
 			externalStorage.delete(object, new ChangeOperationCallback<E>() {
@@ -313,7 +336,7 @@ public abstract class InternalExternalStorage<E> extends Thread {
 	 * @param updateOperation
 	 */
 	public void update(final E object,
-			final StorageOperation.Update updateOperation) {
+			final StorageInterface.UpdateOperation updateOperation) {
 		// TODO bad way, lots code
 		if (externalLoaded) {
 			externalStorage.delete(object, new ChangeOperationCallback<E>() {
@@ -350,28 +373,63 @@ public abstract class InternalExternalStorage<E> extends Thread {
 	}
 
 	// Refresher module
-
 	public StorageRefresher storageRefresher;
 
+	/**
+	 * 
+	 * @param storageRefresher
+	 */
 	public void setStorageRefresher(StorageRefresher storageRefresher) {
 		this.storageRefresher = storageRefresher;
 		this.storageRefresher.setInternalExternalStorage(this);
 		this.storageRefresher.start();
 	}
 
+	/**
+	 * 
+	 */
 	public void stopStorageRefresher() {
 
 	}
 
+	/**
+	 * 
+	 * @return
+	 */
 	public boolean isInternalImmediate() {
 		return internalImmediate;
 	}
 
+	/**
+	 * 
+	 * @return
+	 */
 	public Storage<E> getInternalStorage() {
 		return internalStorage;
 	}
 
+	/**
+	 * 
+	 * @return
+	 */
 	public AsyncStorage<E> getExternalStorage() {
 		return externalStorage;
 	}
+
+	/**
+	 * 
+	 * @return
+	 */
+	public ArrayList<E> getMasterDataList() {
+		return internalDataList;
+	}
+
+	/**
+	 * 
+	 * @return
+	 */
+	public ArrayList<E> getLastestDataList() {
+		return getMasterDataList();
+	}
+
 }

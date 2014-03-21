@@ -34,7 +34,7 @@ public abstract class StorageOperation<E> {
 		return shouldMerge();
 	}
 
-	public abstract void onMergeComplete();
+	public abstract void onMergeComplete(List<E> dataList);
 
 	public List<E> preInternalInsert(List<E> dataList) {
 		return dataList;
@@ -80,31 +80,39 @@ public abstract class StorageOperation<E> {
 
 	public abstract void onException(Exception exception, int where);
 
-	/**
-	 * Exception caught on main StorageOperation
-	 * @author Fuxing
-	 *
-	 */
-	public interface Delete {
-		public void onComplete(boolean internalSucceed,boolean externalSucceed);
-	}
+	public interface StorageInterface {
+		/**
+		 * Exception caught on main StorageOperation
+		 * 
+		 * @author Fuxing
+		 * 
+		 */
+		public interface DeleteOperation {
+			public void onComplete(boolean internalSucceed,
+					boolean externalSucceed);
+		}
 
-	/**
-	 * Exception caught on main StorageOperation
-	 * @author Fuxing
-	 *
-	 */
-	public interface Insert<E> {
-		public void onComplete(E object,boolean internalSucceed,boolean externalSucceed);
-	}
+		/**
+		 * Exception caught on main StorageOperation
+		 * 
+		 * @author Fuxing
+		 * 
+		 */
+		public interface InsertOperation<E> {
+			public void onComplete(E object, boolean internalSucceed,
+					boolean externalSucceed);
+		}
 
-	/**
-	 * Exception caught on main StorageOperation
-	 * @author Fuxing
-	 *
-	 */
-	public interface Update {
-		public void onComplete(boolean internalSucceed,boolean externalSucceed);
+		/**
+		 * Exception caught on main StorageOperation
+		 * 
+		 * @author Fuxing
+		 * 
+		 */
+		public interface UpdateOperation {
+			public void onComplete(boolean internalSucceed,
+					boolean externalSucceed);
 
+		}
 	}
 }

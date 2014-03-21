@@ -14,4 +14,9 @@ public class SqliteAzureStorage<E> extends InternalAzureStorage<E> {
 				dataVersion, client);
 	}
 
+	public SqliteAzureStorage(Class<E> clazz, Context context, int dataVersion,
+			MobileServiceClient client, String tableName) {
+		super(new SqliteStorage<E>(clazz, dataVersion, context), clazz,
+				dataVersion, client, tableName);
+	}
 }

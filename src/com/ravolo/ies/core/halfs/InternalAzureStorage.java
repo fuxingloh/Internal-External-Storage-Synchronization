@@ -21,4 +21,19 @@ public class InternalAzureStorage<E> extends InternalExternalStorage<E> {
 				dataVersion, client));
 	}
 
+	public InternalAzureStorage(ImmediateStorage<E> internalStorage,
+			Class<E> clazz, int dataVersion, MobileServiceClient client,
+			String tableName) {
+		super(internalStorage, new AzureMobileServiceStorage<E>(clazz,
+				dataVersion, client, tableName));
+
+	}
+
+	public InternalAzureStorage(AsyncStorage<E> internalStorage,
+			Class<E> clazz, int dataVersion, MobileServiceClient client,
+			String tableName) {
+		super(internalStorage, new AzureMobileServiceStorage<E>(clazz,
+				dataVersion, client, tableName));
+	}
+
 }
