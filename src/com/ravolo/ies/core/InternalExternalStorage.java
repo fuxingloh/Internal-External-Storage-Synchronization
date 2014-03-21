@@ -27,8 +27,6 @@ public abstract class InternalExternalStorage<E> extends Thread {
 
 	protected ArrayList<E> internalDataList;
 	protected ArrayList<E> externalDataList;
-	
-	private ArrayList<E> masterDataList;
 
 	private boolean internalLoaded;
 	private boolean externalLoaded;
@@ -109,7 +107,8 @@ public abstract class InternalExternalStorage<E> extends Thread {
 		internalDataList.clear();
 		if (internalImmediate) {
 			ImmediateStorage<E> imStorage = (ImmediateStorage<E>) internalStorage;
-			internalDataList.addAll(operations.onInternalLoad(imStorage.load()));
+			internalDataList
+					.addAll(operations.onInternalLoad(imStorage.load()));
 		}
 		internalLoaded = true;
 		operations.onCompleteInternalLoad(internalDataList);
@@ -220,8 +219,23 @@ public abstract class InternalExternalStorage<E> extends Thread {
 		} else {
 			((AsyncStorage<E>) internalStorage).update(toUpdateInternalList);
 		}
+		//Run this on an external client to reread and load all.?
 		
-		operations.onMergeComplete();
+		//Remove existing data first
+		internalDataList.clear();
+		//Set immediate data
+		if (internalImmediate) {
+			internalDataList.addAll(((ImmediateStorage<E>) internalStorage).load());
+			operations.onMergeComplete(internalDataList);
+		}else{
+			((AsyncStorage<E>) internalStorage).load(new QueryOperationCallback<E>(){
+				@Override
+				public void onQueryComplete(List<E> dataList) {
+					internalDataList.addAll(((ImmediateStorage<E>) internalStorage).load());
+					operations.onMergeComplete(internalDataList);
+				}
+			});
+		}
 	}
 
 	/**
@@ -354,28 +368,54 @@ public abstract class InternalExternalStorage<E> extends Thread {
 	}
 
 	// Refresher module
-
 	public StorageRefresher storageRefresher;
 
+	/**
+	 * 
+	 * @param storageRefresher
+	 */
 	public void setStorageRefresher(StorageRefresher storageRefresher) {
 		this.storageRefresher = storageRefresher;
 		this.storageRefresher.setInternalExternalStorage(this);
 		this.storageRefresher.start();
 	}
 
+	/**
+	 * 
+	 */
 	public void stopStorageRefresher() {
 
 	}
 
+	/**
+	 * 
+	 * @return
+	 */
 	public boolean isInternalImmediate() {
 		return internalImmediate;
 	}
 
+	/**
+	 * 
+	 * @return
+	 */
 	public Storage<E> getInternalStorage() {
 		return internalStorage;
 	}
 
+	/**
+	 * 
+	 * @return
+	 */
 	public AsyncStorage<E> getExternalStorage() {
 		return externalStorage;
+	}
+
+	/**
+	 * 
+	 * @return
+	 */
+	public ArrayList<E> getMasterDataList() {
+		return internalDataList;
 	}
 }

@@ -34,7 +34,8 @@ public abstract class StorageOperation<E> {
 		return shouldMerge();
 	}
 
-	public abstract void onMergeComplete();
+	public abstract void onMergeComplete(List<E> dataList);
+	
 
 	public List<E> preInternalInsert(List<E> dataList) {
 		return dataList;
