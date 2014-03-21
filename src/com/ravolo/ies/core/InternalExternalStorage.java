@@ -3,6 +3,7 @@ package com.ravolo.ies.core;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.ravolo.ies.core.StorageOperation.StorageInterface;
 import com.ravolo.ies.merger.DataMerger;
 import com.ravolo.ies.storagerefresher.StorageRefresher;
 import com.ravolo.ies.storages.AsyncStorage;
@@ -246,7 +247,7 @@ public abstract class InternalExternalStorage<E> extends Thread {
 	 * This will insert to both
 	 */
 	public void insert(final E object,
-			final StorageOperation.Insert<E> insertOperation) {
+			final StorageInterface.InsertOperation<E> insertOperation) {
 		// TODO bad way, lots code
 		if (externalLoaded) {
 			externalStorage.insert(object, new InsertOperationCallback<E>() {
@@ -293,7 +294,7 @@ public abstract class InternalExternalStorage<E> extends Thread {
 	 * @param deleteOperation
 	 */
 	public void delete(final E object,
-			final StorageOperation.Delete deleteOperation) {
+			final StorageInterface.DeleteOperation deleteOperation) {
 		// TODO bad way, lots code
 		if (externalLoaded) {
 			externalStorage.delete(object, new ChangeOperationCallback<E>() {
@@ -335,7 +336,7 @@ public abstract class InternalExternalStorage<E> extends Thread {
 	 * @param updateOperation
 	 */
 	public void update(final E object,
-			final StorageOperation.Update updateOperation) {
+			final StorageInterface.UpdateOperation updateOperation) {
 		// TODO bad way, lots code
 		if (externalLoaded) {
 			externalStorage.delete(object, new ChangeOperationCallback<E>() {
