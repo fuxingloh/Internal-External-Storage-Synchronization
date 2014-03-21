@@ -219,22 +219,26 @@ public abstract class InternalExternalStorage<E> extends Thread {
 		} else {
 			((AsyncStorage<E>) internalStorage).update(toUpdateInternalList);
 		}
-		//Run this on an external client to reread and load all.?
-		
-		//Remove existing data first
+		// Run this on an external client to reread and load all.?
+
+		// Remove existing data first
 		internalDataList.clear();
-		//Set immediate data
+		// Set immediate data
 		if (internalImmediate) {
-			internalDataList.addAll(((ImmediateStorage<E>) internalStorage).load());
+			internalDataList.addAll(((ImmediateStorage<E>) internalStorage)
+					.load());
 			operations.onMergeComplete(internalDataList);
-		}else{
-			((AsyncStorage<E>) internalStorage).load(new QueryOperationCallback<E>(){
-				@Override
-				public void onQueryComplete(List<E> dataList) {
-					internalDataList.addAll(((ImmediateStorage<E>) internalStorage).load());
-					operations.onMergeComplete(internalDataList);
-				}
-			});
+		} else {
+			((AsyncStorage<E>) internalStorage)
+					.load(new QueryOperationCallback<E>() {
+						@Override
+						public void onQueryComplete(List<E> dataList) {
+							internalDataList
+									.addAll(((ImmediateStorage<E>) internalStorage)
+											.load());
+							operations.onMergeComplete(internalDataList);
+						}
+					});
 		}
 	}
 
@@ -418,4 +422,13 @@ public abstract class InternalExternalStorage<E> extends Thread {
 	public ArrayList<E> getMasterDataList() {
 		return internalDataList;
 	}
+
+	/**
+	 * 
+	 * @return
+	 */
+	public ArrayList<E> getLastestDataList() {
+		return getMasterDataList();
+	}
+
 }
