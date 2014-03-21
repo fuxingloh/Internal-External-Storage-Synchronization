@@ -27,6 +27,8 @@ public abstract class InternalExternalStorage<E> extends Thread {
 
 	protected ArrayList<E> internalDataList;
 	protected ArrayList<E> externalDataList;
+	
+	private ArrayList<E> masterDataList;
 
 	private boolean internalLoaded;
 	private boolean externalLoaded;
@@ -218,6 +220,8 @@ public abstract class InternalExternalStorage<E> extends Thread {
 		} else {
 			((AsyncStorage<E>) internalStorage).update(toUpdateInternalList);
 		}
+		
+		operations.onMergeComplete();
 	}
 
 	/**
