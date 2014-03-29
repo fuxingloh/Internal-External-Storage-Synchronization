@@ -8,6 +8,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.os.Build;
 
@@ -157,7 +158,7 @@ public class SqliteController extends SQLiteOpenHelper {
 		dataList = new ArrayList<HashMap<String, String>>();
 		String selectQuery = "SELECT  * FROM " + table.getTableName();
 		SQLiteDatabase database = this.getWritableDatabase();
-		Cursor cursor = database.rawQuery(selectQuery, null);
+		Cursor cursor = getCursorCheckDBExist(selectQuery, database);
 		if (cursor.moveToFirst()) {
 			do {
 				HashMap<String, String> data = new HashMap<String, String>();
@@ -180,7 +181,7 @@ public class SqliteController extends SQLiteOpenHelper {
 		ArrayList<HashMap<String, Object>> dataList = new ArrayList<HashMap<String, Object>>();
 		String selectQuery = "SELECT  * FROM " + table.getTableName();
 		SQLiteDatabase database = this.getWritableDatabase();
-		Cursor cursor = database.rawQuery(selectQuery, null);
+		Cursor cursor = getCursorCheckDBExist(selectQuery, database);
 		if (cursor.moveToFirst()) {
 			do {
 				HashMap<String, Object> data = new HashMap<String, Object>();
@@ -205,7 +206,7 @@ public class SqliteController extends SQLiteOpenHelper {
 		SQLiteDatabase database = this.getReadableDatabase();
 		String selectQuery = "SELECT * FROM " + table.getTableName()
 				+ " WHERE " + table.getPrimaryKey() + "='" + id + "'";
-		Cursor cursor = database.rawQuery(selectQuery, null);
+		Cursor cursor = getCursorCheckDBExist(selectQuery, database);
 		if (cursor.moveToFirst()) {
 			do {
 				data.put(table.getPrimaryKey(), cursor.getString(0));
@@ -227,7 +228,7 @@ public class SqliteController extends SQLiteOpenHelper {
 		SQLiteDatabase database = this.getReadableDatabase();
 		String selectQuery = "SELECT * FROM " + table.getTableName()
 				+ " WHERE " + table.getPrimaryKey() + "='" + id + "'";
-		Cursor cursor = database.rawQuery(selectQuery, null);
+		Cursor cursor = getCursorCheckDBExist(selectQuery, database);
 		if (cursor.moveToFirst()) {
 			do {
 				data.put(table.getPrimaryKey(), getObjectInCursor(cursor, 0));
@@ -238,6 +239,29 @@ public class SqliteController extends SQLiteOpenHelper {
 			} while (cursor.moveToNext());
 		}
 		return data;
+	}
+
+	/**
+	 * Auto add table if do not exist.
+	 * 
+	 * @param selectQuery
+	 * @param database
+	 * @return
+	 */
+	Cursor getCursorCheckDBExist(String selectQuery, SQLiteDatabase database) {
+		Cursor cursor;
+		try {
+			cursor = database.rawQuery(selectQuery, null);
+		} catch (SQLiteException exception) {
+			if (exception.getMessage().contains("no such")) {
+				onCreate(database);// duno if this is called asyncly might crash
+									// the app TODO
+				cursor = database.rawQuery(selectQuery, null);
+			} else {
+				throw exception;
+			}
+		}
+		return cursor;
 	}
 
 	/**
