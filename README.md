@@ -1,6 +1,7 @@
 Internal-External-Storage-Synchronization
 =========================================
 
+Moved the project from eclipse adt to Android Studio
 Internal storage: sqlite, External storage: cloud like azure, with this library you can sync data. with internet or not
 
 ATM there is no documentation for IES. Request if you want 1.
